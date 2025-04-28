@@ -13,6 +13,13 @@ return new class extends Migration
     {
         Schema::create('cleanup_areas', function (Blueprint $table) {
             $table->id();
+            $table->string('title');
+            $table->text('description')->nullable();
+            $table->decimal('latitude', 10, 7);
+            $table->decimal('longitude', 10, 7);
+            $table->enum('severity', ['low', 'medium', 'high']);
+            $table->enum('status', ['reported', 'scheduled', 'completed']);
+            $table->foreignId('user_id')->constrained();
             $table->timestamps();
         });
     }
