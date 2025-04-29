@@ -36,8 +36,11 @@ Route::middleware('auth')->group(function () {
     Route::get('cleanup-areas/{CleanupArea}', [CleanupAreaController::class, 'update'])->name('cleanup-areas.update');
     Route::get('cleanup-areas/{CleanupArea}', [CleanupAreaController::class, 'destroy'])->name('cleanup-areas.destroy');
 
+});
 
+// API ROUTES
+Route::prefix('api')->group(function () {
+    Route::get('/cleanup-areas', [CleanupAreaController::class, 'apiIndex'])->name('api.cleanup-areas');
+});
 
-
-})
 require __DIR__.'/auth.php';
