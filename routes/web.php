@@ -26,16 +26,15 @@ Route::middleware('auth')->group(function () {
 
 // Anyone can see these routes
 Route::get('/cleanup-areas', [CleanupAreaController::class, 'index'])->name('cleanup-areas.index');
-Route::get('/cleanup-areas/{cleanupArea}',[CleanupAreaController::class, 'show'])->name('cleanup-areas.show');
+Route::get('/cleanup-areas/{cleanupArea}', [CleanupAreaController::class, 'show'])->name('cleanup-areas.show');
 
 // Pages only logged-in users can access
 Route::middleware('auth')->group(function () {
-    Route::get('cleanup-areas/create', [CleanupAreaController::class, 'create'])->name('cleanup-areas.create');
-    Route::get('cleanup-areas', [CleanupAreaController::class, 'store'])->name('cleanup-areas.store');
-    Route::get('cleanup-areas/{CleanupArea}/edit', [CleanupAreaController::class, 'edit'])->name('cleanup-areas.edit');
-    Route::get('cleanup-areas/{CleanupArea}', [CleanupAreaController::class, 'update'])->name('cleanup-areas.update');
-    Route::get('cleanup-areas/{CleanupArea}', [CleanupAreaController::class, 'destroy'])->name('cleanup-areas.destroy');
-
+    Route::get('/cleanup-areas/create', [CleanupAreaController::class, 'create'])->name('cleanup-areas.create');
+    Route::post('/cleanup-areas', [CleanupAreaController::class, 'store'])->name('cleanup-areas.store');
+    Route::get('/cleanup-areas/{cleanupArea}/edit', [CleanupAreaController::class, 'edit'])->name('cleanup-areas.edit');
+    Route::put('/cleanup-areas/{cleanupArea}', [CleanupAreaController::class, 'update'])->name('cleanup-areas.update');
+    Route::delete('/cleanup-areas/{cleanupArea}', [CleanupAreaController::class, 'destroy'])->name('cleanup-areas.destroy');
 });
 
 // API ROUTES
