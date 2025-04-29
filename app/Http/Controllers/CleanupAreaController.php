@@ -6,6 +6,15 @@ use Illuminate\Http\Request;
 
 class CleanupAreaController extends Controller
 {
+
+    public function apiIndex(Request $request)
+    {
+        // This will eventually return cleanup areas in JSON format for the map
+        // For now, return empty array until we implement the database
+        return response()->json([]);
+    }
+
+
     /**
      * Display a listing of the resource.
      */
