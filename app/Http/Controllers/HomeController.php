@@ -15,6 +15,8 @@ class HomeController extends Controller
     ];
 
     // Get upcoming cleanup events (we'll add this model later)
-        // For now, pass an empty collection
+    // For now, pass an empty collection
+    $upcomingEvents = collect();
+
 
 }
