@@ -18,5 +18,8 @@ class HomeController extends Controller
     // For now, pass an empty collection
     $upcomingEvents = collect();
 
+    return view('home', compact('statistics', 'upcomingEvents'));
+
+
 
 }
