@@ -7,11 +7,13 @@ use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
-    // Get statistics for the homepage
+    public function index()
+    {
+        // Get statistics for the homepage
     $statistics = [
-        'area_count' => CleanupArea::count(),
-        'completed_count' => CleanupArea::where('status', 'completed')->count(),
-        'users_count' => User::count(),
+        'area_count' => Cleanuparea::class
+        // 'completed_count' => CleanupArea::where('status', 'completed')->count(),
+        // 'users_count' => User::count(),
     ];
 
     // Get upcoming cleanup events (we'll add this model later)
@@ -19,7 +21,5 @@ class HomeController extends Controller
     $upcomingEvents = collect();
 
     return view('home', compact('statistics', 'upcomingEvents'));
-
-
-
+    }
 }
