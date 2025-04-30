@@ -12,8 +12,9 @@ class HomeController extends Controller
         'area_count' => CleanupArea::count(),
         'completed_count' => CleanupArea::where('status', 'completed')->count(),
         'users_count' => User::count(),
-
-
     ];
+
+    // Get upcoming cleanup events (we'll add this model later)
+        // For now, pass an empty collection
 
 }
