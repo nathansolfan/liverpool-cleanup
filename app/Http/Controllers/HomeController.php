@@ -11,7 +11,7 @@ class HomeController extends Controller
     $statistics = [
         'area_count' => CleanupArea::count(),
         'completed_count' => CleanupArea::where('status', 'completed')->count(),
-        'users_count' => User::count(),
+        // 'users_count' => User::count(),
     ];
 
     // Get upcoming cleanup events (we'll add this model later)
