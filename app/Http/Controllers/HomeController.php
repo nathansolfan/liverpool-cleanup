@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CleanupArea;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 
@@ -11,9 +13,9 @@ class HomeController extends Controller
     {
         // Get statistics for the homepage
     $statistics = [
-        'area_count' => Cleanuparea::class
-        // 'completed_count' => CleanupArea::where('status', 'completed')->count(),
-        // 'users_count' => User::count(),
+        'area_count' => CleanupArea::class,
+        'completed_count' => CleanupArea::where('status', 'completed')->count(),
+        'users_count' => User::count(),
     ];
 
     // Get upcoming cleanup events (we'll add this model later)
