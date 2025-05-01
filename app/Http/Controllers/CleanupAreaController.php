@@ -22,7 +22,7 @@ class CleanupAreaController extends Controller
     public function index()
     {
         $cleanupAreas = CleanupArea::all();
-        return view('cleanup.index', compact('cleanup'));
+        return view('cleanup-areas.index', compact('cleanupAreas'));
     }
 
     /**
