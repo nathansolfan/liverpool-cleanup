@@ -39,7 +39,15 @@ class CleanupAreaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // steps: validate - create new CleanupArea - redirect
+        //validate
+        $validated = [
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+            'severity' => 'required|in:low,medium,high',
+        ];
     }
 
     /**
