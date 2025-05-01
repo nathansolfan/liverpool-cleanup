@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CleanupArea;
 use Illuminate\Http\Request;
 
 class CleanupAreaController extends Controller
@@ -20,7 +21,8 @@ class CleanupAreaController extends Controller
      */
     public function index()
     {
-        //
+        $cleanupAreas = CleanupArea::all();
+        return view('cleanup.index', compact('cleanup'));
     }
 
     /**
