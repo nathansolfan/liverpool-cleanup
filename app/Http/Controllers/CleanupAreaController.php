@@ -30,7 +30,8 @@ class CleanupAreaController extends Controller
      */
     public function create()
     {
-        //
+        //return the view with the form
+        return view('cleanup-areas.create');
     }
 
     /**
