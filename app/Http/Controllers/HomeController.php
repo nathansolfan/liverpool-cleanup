@@ -13,7 +13,7 @@ class HomeController extends Controller
     {
         // Get statistics for the homepage
     $statistics = [
-        'area_count' => CleanupArea::class,
+        'areas_count' => CleanupArea::class,
         'completed_count' => CleanupArea::where('status', 'completed')->count(),
         'users_count' => User::count(),
     ];
