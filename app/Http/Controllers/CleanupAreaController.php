@@ -40,14 +40,24 @@ class CleanupAreaController extends Controller
     public function store(Request $request)
     {
         // steps: validate - create new CleanupArea - redirect
-        //validate
-        $validated = [
+        $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
             'severity' => 'required|in:low,medium,high',
-        ];
+        ]);
+
+        // Add additional fields not from the form
+        $validated['status'] = 'reported'; //default for new areas
+        $validated['user_id'] = $request->user()->id;
+        // $validated['user_id'] = Auth::id();
+
+        // create: var: Model + create(   $validated  )
+        $cleanupArea = CleanupArea::create($validated);
+
+        // redirect
+        return redirect()->route('cleanup-areas.show', $cleanupArea)->with('success','Cleanup Area reported with success');
     }
 
     /**
