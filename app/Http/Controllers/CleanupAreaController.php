@@ -63,15 +63,16 @@ class CleanupAreaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(CleanupArea $cleanup)
     {
-        //
+        // display each specific cleanupArea
+        return view('cleanup-areas.show', compact('cleanup-areas'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(CleanupArea $cleanup)
     {
         //
     }
