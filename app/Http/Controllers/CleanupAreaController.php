@@ -66,7 +66,7 @@ class CleanupAreaController extends Controller
     public function show(CleanupArea $cleanup)
     {
         // display each specific cleanupArea
-        return view('cleanup-areas.show', compact('cleanup-areas'));
+        return view('cleanup-areas.show', compact('cleanup'));
     }
 
     /**
@@ -74,7 +74,7 @@ class CleanupAreaController extends Controller
      */
     public function edit(CleanupArea $cleanup)
     {
-        return view('cleanup-areas.edit', compact('edit'));
+        return view('cleanup-areas.edit', compact('cleanup'));
     }
 
     /**
@@ -82,14 +82,27 @@ class CleanupAreaController extends Controller
      */
     public function update(Request $request, CleanupArea $cleanup)
     {
-        //
+        $validated = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+            'severity' => 'required|in:low,medium,high',
+        ]);
+
+        $cleanup->update($validated);
+
+        return redirect()->route('cleanup-areas.index')->with('success', 'Cleanup Area has been updated');
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(CleanupArea $cleanup)
     {
-        //
+
+        $cleanup->delete();
+
+        return redirect()->route('cleanup-areas.index')->with('success', 'Cleanup Route deleted');
     }
 }
