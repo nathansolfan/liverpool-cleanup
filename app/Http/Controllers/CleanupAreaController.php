@@ -74,13 +74,13 @@ class CleanupAreaController extends Controller
      */
     public function edit(CleanupArea $cleanup)
     {
-        //
+        return view('cleanup-areas.edit', compact('edit'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, CleanupArea $cleanup)
     {
         //
     }
