@@ -30,8 +30,8 @@ class CleanupAreaController extends Controller
      */
     public function create()
     {
-        dd('Create method reached!'); // This will show if the method is being hit
-    return view('cleanup-areas.create');
+        // dd('Create method reached!'); // This will show if the method is being hit
+        // return view('cleanup-areas.create');
         //return the view with the form
         return view('cleanup-areas.create');
     }
@@ -59,7 +59,7 @@ class CleanupAreaController extends Controller
         $cleanupArea = CleanupArea::create($validated);
 
         // redirect
-        return redirect()->route('cleanup-areas.show', $cleanupArea)->with('success','Cleanup Area reported with success');
+        return redirect()->route('cleanup-areas.show', $cleanupArea)->with('success', 'Cleanup Area reported with success');
     }
 
     /**
