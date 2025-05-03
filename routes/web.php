@@ -26,7 +26,6 @@ Route::middleware('auth')->group(function () {
 
 // Anyone can see these routes
 Route::get('/cleanup-areas', [CleanupAreaController::class, 'index'])->name('cleanup-areas.index');
-Route::get('/cleanup-areas/{cleanupArea}', [CleanupAreaController::class, 'show'])->name('cleanup-areas.show');
 
 // Pages only logged-in users can access
 Route::middleware('auth')->group(function () {
@@ -36,6 +35,10 @@ Route::middleware('auth')->group(function () {
     Route::put('/cleanup-areas/{cleanupArea}', [CleanupAreaController::class, 'update'])->name('cleanup-areas.update');
     Route::delete('/cleanup-areas/{cleanupArea}', [CleanupAreaController::class, 'destroy'])->name('cleanup-areas.destroy');
 });
+
+Route::get('/cleanup-areas/{cleanupArea}', [CleanupAreaController::class, 'show'])->name('cleanup-areas.show');
+
+
 
 // API ROUTES
 Route::prefix('api')->group(function () {

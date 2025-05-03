@@ -30,6 +30,8 @@ class CleanupAreaController extends Controller
      */
     public function create()
     {
+        dd('Create method reached!'); // This will show if the method is being hit
+    return view('cleanup-areas.create');
         //return the view with the form
         return view('cleanup-areas.create');
     }
