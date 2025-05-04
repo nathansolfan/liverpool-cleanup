@@ -12,6 +12,10 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+Route::get('/map-test', function () {
+    return view('map-test');
+});
+
 // Dashboard from Breeze
 Route::get('/dashboard', function () {
     return view('dashboard');

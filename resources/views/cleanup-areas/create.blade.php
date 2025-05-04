@@ -1,4 +1,15 @@
 <x-app-layout>
+    @push('styles')
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+<style>
+#map {
+    height: 256px; /* Override Tailwind h-64 */
+    width: 100%;
+    z-index: 0; /* Ensure proper stacking */
+}
+</style>
+@endpush
+
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Report Cleanup Area') }}
@@ -50,7 +61,11 @@
 
                         <div class="mb-6">
                             <p class="block text-sm font-medium text-gray-700 mb-2">Location</p>
-                            <div id="map" class="h-64 w-full border border-gray-300 rounded-md mb-2"></div>
+
+                            <!-- Add Leaflet CSS in the blade file directly -->
+                            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"/>
+
+                            <div id="map" style="height: 300px; width: 100%;" class="border border-gray-300 rounded-md mb-2"></div>
                             <p class="text-sm text-gray-500 mb-2">Click on the map to set the location</p>
 
                             <div class="grid grid-cols-2 gap-4">
@@ -83,52 +98,24 @@
         </div>
     </div>
 
-    @push('scripts')
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap" defer></script>
-    <script>
-        // Initialize map
-        let map;
-        let marker;
+    <!-- Simplified JavaScript only -->
+@push('scripts')
+<script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM Content Loaded');
 
-        function initMap() {
-            // Liverpool center coordinates
-            const liverpool = { lat: 53.4084, lng: -2.9916 };
+    // Very simple initialization
+    const map = L.map('map').setView([53.4084, -2.9916], 12);
+    console.log('Map object created', map);
 
-            map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 12,
-                center: liverpool,
-            });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
 
-            // Add click listener to the map
-            map.addListener("click", (e) => {
-                placeMarker(e.latLng);
-            });
+    console.log('Tile layer added');
+});
+</script>
+@endpush
 
-            // If we have coordinates already (e.g. from validation error), set the marker
-            const lat = document.getElementById("latitude").value;
-            const lng = document.getElementById("longitude").value;
-            if (lat && lng) {
-                const position = new google.maps.LatLng(parseFloat(lat), parseFloat(lng));
-                placeMarker(position);
-            }
-        }
-
-        function placeMarker(location) {
-            // Remove existing marker if any
-            if (marker) {
-                marker.setMap(null);
-            }
-
-            // Create new marker
-            marker = new google.maps.Marker({
-                position: location,
-                map: map
-            });
-
-            // Update form fields
-            document.getElementById("latitude").value = location.lat();
-            document.getElementById("longitude").value = location.lng();
-        }
-    </script>
-    @endpush
 </x-app-layout>
