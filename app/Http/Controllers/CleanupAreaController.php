@@ -81,7 +81,7 @@ class CleanupAreaController extends Controller
     public function show(CleanupArea $cleanup)
     {
         // display each specific cleanupArea
-        return view('cleanup-areas.show', compact('cleanup'));
+        return view('cleanup-areas.show', compact('cleanupAreas'));
     }
 
     /**
