@@ -1,4 +1,14 @@
 <x-app-layout>
+    @push('styles')
+    <style>
+    #cleanup-map {
+        height: 384px;
+        width: 100%;
+        z-index: 0;
+    }
+    </style>
+    @endpush
+
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
             {{ __('Cleanup Area Details') }}
@@ -29,38 +39,38 @@
                     </div>
 
                     <!-- Title -->
-                    <h3 class="text-2xl font-bold text-gray-800 mb-4">{{ $cleanup->title }}</h3>
+                    <h3 class="text-2xl font-bold text-gray-800 mb-4">{{ $cleanupArea->title }}</h3>
 
                     <!-- Status and Severity Badges -->
                     <div class="mb-6">
                         <span class="inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium
-                            @if($cleanup->status == 'completed') bg-green-100 text-green-800
-                            @elseif($cleanup->status == 'scheduled') bg-blue-100 text-blue-800
+                            @if($cleanupArea->status == 'completed') bg-green-100 text-green-800
+                            @elseif($cleanupArea->status == 'scheduled') bg-blue-100 text-blue-800
                             @else bg-gray-100 text-gray-800 @endif">
-                            Status: {{ ucfirst($cleanup->status) }}
+                            Status: {{ ucfirst($cleanupArea->status) }}
                         </span>
                         <span class="ml-2 inline-flex items-center px-3 py-0.5 rounded-full text-sm font-medium
-                            @if($cleanup->severity == 'high') bg-red-100 text-red-800
-                            @elseif($cleanup->severity == 'medium') bg-yellow-100 text-yellow-800
+                            @if($cleanupArea->severity == 'high') bg-red-100 text-red-800
+                            @elseif($cleanupArea->severity == 'medium') bg-yellow-100 text-yellow-800
                             @else bg-green-100 text-green-800 @endif">
-                            Severity: {{ ucfirst($cleanup->severity) }}
+                            Severity: {{ ucfirst($cleanupArea->severity) }}
                         </span>
                     </div>
 
                     <!-- Description -->
                     <div class="mb-8">
                         <h4 class="text-lg font-semibold text-gray-700 mb-2">Description</h4>
-                        <p class="text-gray-600 whitespace-pre-wrap">{{ $cleanup->description ?? 'No description provided.' }}</p>
+                        <p class="text-gray-600 whitespace-pre-wrap">{{ $cleanupArea->description ?? 'No description provided.' }}</p>
                     </div>
 
                     <!-- Location Map -->
                     <div class="mb-8">
                         <h4 class="text-lg font-semibold text-gray-700 mb-2">Location</h4>
-                        <div id="cleanup-map" class="h-96 w-full rounded-lg border border-gray-300 bg-gray-100">
-                            <!-- Map will load here -->
+                        <div id="cleanup-map" class="rounded-lg border border-gray-300 bg-gray-100">
+                            <!-- Google Map will load here -->
                         </div>
                         <p class="text-sm text-gray-500 mt-2">
-                            Coordinates: {{ $cleanup->latitude }}, {{ $cleanup->longitude }}
+                            Coordinates: {{ $cleanupArea->latitude }}, {{ $cleanupArea->longitude }}
                         </p>
                     </div>
 
@@ -68,20 +78,20 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
                         <div>
                             <h4 class="text-lg font-semibold text-gray-700 mb-2">Reported By</h4>
-                            <p class="text-gray-600">{{ $cleanup->user->name ?? 'Unknown' }}</p>
+                            <p class="text-gray-600">{{ $cleanupArea->user->name ?? 'Unknown' }}</p>
                         </div>
                         <div>
                             <h4 class="text-lg font-semibold text-gray-700 mb-2">Reported On</h4>
-                            <p class="text-gray-600">{{ $cleanup->created_at ? $cleanup->created_at->format('F j, Y, g:i a') : 'Date not available' }}</p>
+                            <p class="text-gray-600">{{ $cleanupArea->created_at ? $cleanupArea->created_at->format('F j, Y, g:i a') : 'Date not available' }}</p>
                         </div>
                     </div>
 
                     <!-- Action Buttons -->
                     <div class="flex items-center justify-end space-x-3">
-                        <a href="{{ route('cleanup-areas.edit', $cleanup) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 active:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+                        <a href="{{ route('cleanup-areas.edit', $cleanupArea) }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-500 active:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                             Edit
                         </a>
-                        <form action="{{ route('cleanup-areas.destroy', $cleanup) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this cleanup area?');">
+                        <form action="{{ route('cleanup-areas.destroy', $cleanupArea) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure you want to delete this cleanup area?');">
                             @csrf
                             @method('DELETE')
                             <button type="submit" class="inline-flex items-center px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-500 active:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
@@ -95,11 +105,10 @@
     </div>
 
     @push('scripts')
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&callback=initMap" defer></script>
     <script>
         function initMap() {
             // Get the cleanup area coordinates
-            const location = { lat: {{ $cleanup->latitude }}, lng: {{ $cleanup->longitude }} };
+            const location = { lat: {{ $cleanupArea->latitude }}, lng: {{ $cleanupArea->longitude }} };
 
             // Create the map centered at the cleanup area
             const map = new google.maps.Map(document.getElementById("cleanup-map"), {
@@ -107,13 +116,36 @@
                 center: location,
             });
 
-            // Add a marker at the cleanup area location
-            new google.maps.Marker({
+            // Add a marker at the cleanup area location with custom color based on severity
+            let markerColor = '#4CAF50'; // green for low
+            if ('{{ $cleanupArea->severity }}' === 'high') markerColor = '#F44336'; // red
+            else if ('{{ $cleanupArea->severity }}' === 'medium') markerColor = '#FF9800'; // orange
+
+            const marker = new google.maps.Marker({
                 position: location,
                 map: map,
-                title: "{{ $cleanup->title }}"
+                title: "{{ $cleanupArea->title }}",
+                icon: {
+                    url: 'http://maps.google.com/mapfiles/ms/icons/' +
+                        (markerColor === '#F44336' ? 'red' :
+                         markerColor === '#FF9800' ? 'orange' : 'green') + '-dot.png'
+                }
+            });
+
+            // Add info window
+            const infoWindow = new google.maps.InfoWindow({
+                content: `<div style="padding: 10px;">
+                            <h3 style="margin: 0; font-weight: bold;">{{ $cleanupArea->title }}</h3>
+                            <p style="margin: 5px 0;">Severity: {{ ucfirst($cleanupArea->severity) }}</p>
+                            <p style="margin: 5px 0;">Status: {{ ucfirst($cleanupArea->status) }}</p>
+                          </div>`
+            });
+
+            marker.addListener('click', () => {
+                infoWindow.open(map, marker);
             });
         }
     </script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAHBjvzcG26iURd2HMx3Tf38hnE9EHeoA&callback=initMap" async defer></script>
     @endpush
 </x-app-layout>

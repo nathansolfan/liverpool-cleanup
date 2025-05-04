@@ -7,10 +7,8 @@ use Illuminate\Http\Request;
 
 class CleanupAreaController extends Controller
 {
-
     public function apiIndex(Request $request)
     {
-
         $query = CleanupArea::query();
 
         // Apply filters
@@ -23,11 +21,10 @@ class CleanupAreaController extends Controller
         }
 
         $areas = $query->get();
-        // This will eventually return cleanup areas in JSON format for the map
-        // For now, return empty array until we implement the database
-        return response()->json([]);
-    }
 
+        // Return the actual areas instead of empty array
+        return response()->json($areas);
+    }
 
     /**
      * Display a listing of the resource.
@@ -43,9 +40,6 @@ class CleanupAreaController extends Controller
      */
     public function create()
     {
-        // dd('Create method reached!'); // This will show if the method is being hit
-        // return view('cleanup-areas.create');
-        //return the view with the form
         return view('cleanup-areas.create');
     }
 
@@ -54,7 +48,6 @@ class CleanupAreaController extends Controller
      */
     public function store(Request $request)
     {
-        // steps: validate - create new CleanupArea - redirect
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -63,39 +56,35 @@ class CleanupAreaController extends Controller
             'severity' => 'required|in:low,medium,high',
         ]);
 
-        // Add additional fields not from the form
-        $validated['status'] = 'reported'; //default for new areas
+        $validated['status'] = 'reported';
         $validated['user_id'] = $request->user()->id;
-        // $validated['user_id'] = Auth::id();
 
-        // create: var: Model + create(   $validated  )
         $cleanupArea = CleanupArea::create($validated);
 
-        // redirect
         return redirect()->route('cleanup-areas.show', $cleanupArea)->with('success', 'Cleanup Area reported with success');
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(CleanupArea $cleanup)
+    public function show(CleanupArea $cleanupArea)
     {
-        // display each specific cleanupArea
-        return view('cleanup-areas.show', compact('cleanupAreas'));
+        // Changed parameter name and variable name for consistency
+        return view('cleanup-areas.show', compact('cleanupArea'));
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(CleanupArea $cleanup)
+    public function edit(CleanupArea $cleanupArea)
     {
-        return view('cleanup-areas.edit', compact('cleanup'));
+        return view('cleanup-areas.edit', compact('cleanupArea'));
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, CleanupArea $cleanup)
+    public function update(Request $request, CleanupArea $cleanupArea)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -105,7 +94,7 @@ class CleanupAreaController extends Controller
             'severity' => 'required|in:low,medium,high',
         ]);
 
-        $cleanup->update($validated);
+        $cleanupArea->update($validated);
 
         return redirect()->route('cleanup-areas.index')->with('success', 'Cleanup Area has been updated');
     }
@@ -113,11 +102,10 @@ class CleanupAreaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CleanupArea $cleanup)
+    public function destroy(CleanupArea $cleanupArea)
     {
+        $cleanupArea->delete();
 
-        $cleanup->delete();
-
-        return redirect()->route('cleanup-areas.index')->with('success', 'Cleanup Route deleted');
+        return redirect()->route('cleanup-areas.index')->with('success', 'Cleanup Area deleted');
     }
 }
