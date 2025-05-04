@@ -91,8 +91,93 @@
     </div>
 
     @push('scripts')
-    <!-- Remember to get a Google Maps API Key -->
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY&libraries=visualization&callback=initMap" defer></script>
-    <script src="{{ asset('js/heatmap.js') }}"></script>
-    @endpush
+<script>
+let map;
+let markers = [];
+
+function initMap() {
+    // Center on Liverpool
+    const liverpool = { lat: 53.4084, lng: -2.9916 };
+
+    map = new google.maps.Map(document.getElementById("cleanup-map"), {
+        zoom: 11,
+        center: liverpool,
+        styles: [
+            // Optional: Add a lighter map style for the overview
+            {
+                "featureType": "all",
+                "elementType": "geometry.fill",
+                "stylers": [{"saturation": -30}]
+            }
+        ]
+    });
+
+    // Load initial cleanup areas
+    loadCleanupAreas();
+
+    // Add filter listeners
+    document.getElementById('status-filter').addEventListener('change', loadCleanupAreas);
+    document.getElementById('severity-filter').addEventListener('change', loadCleanupAreas);
+}
+
+function loadCleanupAreas() {
+    const statusFilter = document.getElementById('status-filter').value;
+    const severityFilter = document.getElementById('severity-filter').value;
+
+    // Clear existing markers
+    markers.forEach(marker => marker.setMap(null));
+    markers = [];
+
+    // Fetch filtered data (you'll need to create this API endpoint)
+    fetch(`/api/cleanup-areas?status=${statusFilter}&severity=${severityFilter}`)
+        .then(response => response.json())
+        .then(areas => {
+            areas.forEach(area => {
+                const markerColor = getMarkerColor(area.severity);
+
+                const marker = new google.maps.Marker({
+                    position: { lat: parseFloat(area.latitude), lng: parseFloat(area.longitude) },
+                    map: map,
+                    icon: {
+                        path: google.maps.SymbolPath.CIRCLE,
+                        scale: 8,
+                        fillColor: markerColor,
+                        fillOpacity: 0.8,
+                        strokeColor: markerColor,
+                        strokeWeight: 1
+                    }
+                });
+
+                // Simple info window
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `<div style="padding: 10px;">
+                                <strong>${area.title}</strong><br>
+                                Severity: ${area.severity}<br>
+                                <a href="/cleanup-areas/${area.id}" style="color: blue;">View Details</a>
+                              </div>`
+                });
+
+                marker.addListener('click', () => infoWindow.open(map, marker));
+                markers.push(marker);
+            });
+        });
+}
+
+function getMarkerColor(severity) {
+    switch(severity) {
+        case 'high': return '#F44336';
+        case 'medium': return '#FF9800';
+        default: return '#4CAF50';
+    }
+}
+
+window.onload = function() {
+    if (typeof google === 'undefined') {
+        console.error('Google Maps failed to load!');
+        document.getElementById('cleanup-map').innerHTML = '<p class="text-red-500">Error loading map</p>';
+    }
+};
+</script>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAHBjvzcG26iURd2HMx3Tf38hnE9EHeoA&callback=initMap" async defer></script>
+@endpush
 </x-app-layout>

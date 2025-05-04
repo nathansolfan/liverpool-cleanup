@@ -10,6 +10,19 @@ class CleanupAreaController extends Controller
 
     public function apiIndex(Request $request)
     {
+
+        $query = CleanupArea::query();
+
+        // Apply filters
+        if ($request->has('status') && $request->status != '') {
+            $query->where('status', $request->status);
+        }
+
+        if ($request->has('severity') && $request->severity != '') {
+            $query->where('severity', $request->severity);
+        }
+
+        $areas = $query->get();
         // This will eventually return cleanup areas in JSON format for the map
         // For now, return empty array until we implement the database
         return response()->json([]);
