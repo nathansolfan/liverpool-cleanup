@@ -49,7 +49,7 @@
                     </div>
 
                     <!-- Map Container -->
-                    <div id="cleanup-map" class="h-96 w-full rounded-lg border border-gray-300 bg-gray-100 flex items-center justify-center">
+                    <div id="cleanup-map" class="h-[40rem] w-full rounded-lg border border-gray-300 bg-gray-100 flex items-center justify-center">
                         <p class="text-gray-500">Map loading...</p>
                     </div>
                 </div>
