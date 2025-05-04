@@ -11,6 +11,10 @@
         <link rel="preconnect" href="https://fonts.bunny.net">
         <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+        {{-- ADDED THIS LINE TO SHOW MAP --}}
+        @stack('styles')  <!-- This is needed to render CSS -->
+
+
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
@@ -32,5 +36,9 @@
                 {{ $slot }}
             </main>
         </div>
+
+        {{-- ADDED THIS LINE TO SHOW MAP --}}
+        @stack('scripts')  <!-- This is needed to render JavaScript -->
+
     </body>
 </html>
