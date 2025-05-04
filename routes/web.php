@@ -16,6 +16,10 @@ Route::get('/map-test', function () {
     return view('map-test');
 });
 
+Route::get('/google-map-test', function () {
+    return view('google-map-test');
+});
+
 // Dashboard from Breeze
 Route::get('/dashboard', function () {
     return view('dashboard');
