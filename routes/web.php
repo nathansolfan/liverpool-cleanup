@@ -8,9 +8,6 @@ use Illuminate\Support\Facades\Route;
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Individual cleanup areas are viewable by public
-Route::get('/cleanup-areas/{cleanupArea}', [CleanupAreaController::class, 'show'])->name('cleanup-areas.show');
-
 // Authenticated routes
 Route::middleware('auth')->group(function () {
     // Dashboard
@@ -31,6 +28,9 @@ Route::middleware('auth')->group(function () {
     Route::put('/cleanup-areas/{cleanupArea}', [CleanupAreaController::class, 'update'])->name('cleanup-areas.update');
     Route::delete('/cleanup-areas/{cleanupArea}', [CleanupAreaController::class, 'destroy'])->name('cleanup-areas.destroy');
 });
+
+// Individual cleanup areas are viewable by public (moved after create route to prevent conflict)
+Route::get('/cleanup-areas/{cleanupArea}', [CleanupAreaController::class, 'show'])->name('cleanup-areas.show');
 
 // API routes
 Route::prefix('api')->group(function () {
