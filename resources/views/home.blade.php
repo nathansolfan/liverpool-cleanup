@@ -93,6 +93,7 @@
     @push('scripts')
 <script>
 let map;
+let heatmap;
 let markers = [];
 
 function initMap() {
@@ -100,17 +101,33 @@ function initMap() {
     const liverpool = { lat: 53.4084, lng: -2.9916 };
 
     map = new google.maps.Map(document.getElementById("cleanup-map"), {
-        zoom: 11,
+        zoom: 12,
         center: liverpool,
         styles: [
-            // Optional: Add a lighter map style for the overview
+            // Optional: Add a darker map style for better heatmap visibility
             {
                 "featureType": "all",
                 "elementType": "geometry.fill",
-                "stylers": [{"saturation": -30}]
+                "stylers": [{"saturation": -40}, {"lightness": -20}]
             }
         ]
     });
+
+    // Initialize empty heatmap
+    heatmap = new google.maps.visualization.HeatmapLayer({
+        data: [],
+        radius: 50,
+        opacity: 0.8,
+        gradient: [
+            'rgba(0, 255, 0, 0)',
+            'rgba(0, 255, 0, 1)',
+            'rgba(255, 255, 0, 1)',
+            'rgba(255, 165, 0, 1)',
+            'rgba(255, 0, 0, 1)'
+        ]
+    });
+
+    heatmap.setMap(map);
 
     // Load initial cleanup areas
     loadCleanupAreas();
@@ -124,31 +141,42 @@ function loadCleanupAreas() {
     const statusFilter = document.getElementById('status-filter').value;
     const severityFilter = document.getElementById('severity-filter').value;
 
-    // Clear existing markers
-    markers.forEach(marker => marker.setMap(null));
-    markers = [];
-
-    // Fetch filtered data (you'll need to create this API endpoint)
+    // Fetch filtered data
     fetch(`/api/cleanup-areas?status=${statusFilter}&severity=${severityFilter}`)
         .then(response => response.json())
         .then(areas => {
-            areas.forEach(area => {
-                const markerColor = getMarkerColor(area.severity);
+            // Create heatmap data points
+            const heatmapData = areas.map(area => {
+                // Weight based on severity
+                let weight = 1;
+                if (area.severity === 'medium') weight = 3;
+                if (area.severity === 'high') weight = 5;
 
+                return {
+                    location: new google.maps.LatLng(parseFloat(area.latitude), parseFloat(area.longitude)),
+                    weight: weight
+                };
+            });
+
+            // Update heatmap
+            heatmap.setData(heatmapData);
+
+            // Add markers for reference (optional - you can remove if you want only heatmap)
+            clearMarkers();
+            areas.forEach(area => {
                 const marker = new google.maps.Marker({
                     position: { lat: parseFloat(area.latitude), lng: parseFloat(area.longitude) },
                     map: map,
                     icon: {
                         path: google.maps.SymbolPath.CIRCLE,
-                        scale: 8,
-                        fillColor: markerColor,
-                        fillOpacity: 0.8,
-                        strokeColor: markerColor,
+                        scale: 4,
+                        fillColor: '#ffffff',
+                        fillOpacity: 0.5,
+                        strokeColor: '#000000',
                         strokeWeight: 1
                     }
                 });
 
-                // Simple info window
                 const infoWindow = new google.maps.InfoWindow({
                     content: `<div style="padding: 10px;">
                                 <strong>${area.title}</strong><br>
@@ -163,12 +191,9 @@ function loadCleanupAreas() {
         });
 }
 
-function getMarkerColor(severity) {
-    switch(severity) {
-        case 'high': return '#F44336';
-        case 'medium': return '#FF9800';
-        default: return '#4CAF50';
-    }
+function clearMarkers() {
+    markers.forEach(marker => marker.setMap(null));
+    markers = [];
 }
 
 window.onload = function() {
@@ -178,6 +203,7 @@ window.onload = function() {
     }
 };
 </script>
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAHBjvzcG26iURd2HMx3Tf38hnE9EHeoA&callback=initMap" async defer></script>
+<!-- Load the Google Maps JavaScript API with visualization library -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBAHBjvzcG26iURd2HMx3Tf38hnE9EHeoA&libraries=visualization&callback=initMap" async defer></script>
 @endpush
 </x-app-layout>

@@ -17,6 +17,9 @@ class CleanupArea extends Model
         "user_id",
     ];
 
+    public $timestamps = true; // Make sure this is true or not specified (true is default)
+
+
     /**
      * The user who reported this cleanup area
      */

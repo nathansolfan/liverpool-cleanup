@@ -72,7 +72,7 @@
                         </div>
                         <div>
                             <h4 class="text-lg font-semibold text-gray-700 mb-2">Reported On</h4>
-                            <p class="text-gray-600">{{ $cleanup->created_at->format('F j, Y, g:i a') }}</p>
+                            <p class="text-gray-600">{{ $cleanup->created_at ? $cleanup->created_at->format('F j, Y, g:i a') : 'Date not available' }}</p>
                         </div>
                     </div>
 
