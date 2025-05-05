@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Stripe\Stripe;
 
 class DonateController extends Controller
 {
@@ -25,5 +26,10 @@ class DonateController extends Controller
         // In a real app, you'd save the donation to the database
         // and process the payment through Stripe, PayPal, etc.
         return redirect()->route('donate')->with('success', 'Thank you for your donation! Your support helps keep our communities clean.');
+    }
+
+    public function process()
+    {
+        Stripe::setApiKey(config('services.stripe.secret'));
     }
 }
