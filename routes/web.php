@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CleanupAreaController;
+use App\Http\Controllers\DonateController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
@@ -30,7 +31,8 @@ Route::middleware('auth')->group(function () {
 
 
     // Donate Routes
-    Route::get('/donate' );
+    Route::get('/donate', [DonateController::class, 'index'])->name('donate');
+    Route::get('/donate/process', [DonateController::class, 'show'])->name('donate.process');
 });
 
 // Individual cleanup areas are viewable by public (moved after create route to prevent conflict)
