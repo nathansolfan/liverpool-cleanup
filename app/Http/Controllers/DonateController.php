@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Stripe\PaymentIntent;
 use Stripe\Stripe;
 
 class DonateController extends Controller
@@ -28,8 +29,15 @@ class DonateController extends Controller
         return redirect()->route('donate')->with('success', 'Thank you for your donation! Your support helps keep our communities clean.');
     }
 
-    public function process()
+    public function process(Request $request)
     {
         Stripe::setApiKey(config('services.stripe.secret'));
+
+        // Create payment intent
+        $paymentIntent = PaymentIntent::create([
+            'amount' => $request->amount * 100, //Convert to pence
+            'currency' => 'gbp',
+            'description' => 'Community Cleanup Donation',
+        ]);
     }
 }
