@@ -27,6 +27,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/cleanup-areas/{cleanupArea}/edit', [CleanupAreaController::class, 'edit'])->name('cleanup-areas.edit');
     Route::put('/cleanup-areas/{cleanupArea}', [CleanupAreaController::class, 'update'])->name('cleanup-areas.update');
     Route::delete('/cleanup-areas/{cleanupArea}', [CleanupAreaController::class, 'destroy'])->name('cleanup-areas.destroy');
+
+
+    // Donate Routes
+    Route::get('/donate' );
 });
 
 // Individual cleanup areas are viewable by public (moved after create route to prevent conflict)
