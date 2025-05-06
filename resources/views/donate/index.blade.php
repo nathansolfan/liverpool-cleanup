@@ -33,7 +33,7 @@
                     <div class="p-6 text-gray-900">
                         <h4 class="text-xl font-semibold text-gray-800 mb-4">Donation Form</h4>
 
-                        <form action="{{ route('donate.process') }}" method="POST">
+                        <form id="payment-form" action="{{ route('donate.process') }}" method="POST">
                             @csrf
 
                             <!-- Amount -->
@@ -84,12 +84,12 @@
                                 </label>
                                 <div class="space-y-2">
                                     <label class="flex items-center">
-                                        <input type="radio" name="payment_method" value="credit_card" {{ old('payment_method', 'credit_card') == 'credit_card' ? 'checked' : '' }} class="mr-2">
+                                        <input type="radio" name="payment_method" value="credit_card" {{ old('payment_method', 'credit_card') == 'credit_card' ? 'checked' : '' }} class="mr-2" checked>
                                         Credit/Debit Card
                                     </label>
                                     <label class="flex items-center">
-                                        <input type="radio" name="payment_method" value="paypal" {{ old('payment_method') == 'paypal' ? 'checked' : '' }} class="mr-2">
-                                        PayPal
+                                        <input type="radio" name="payment_method" value="paypal" {{ old('payment_method') == 'paypal' ? 'checked' : '' }} class="mr-2" disabled>
+                                        PayPal (Coming Soon)
                                     </label>
                                 </div>
                                 @error('payment_method')
@@ -123,7 +123,27 @@
                                 @enderror
                             </div>
 
-                            <button type="submit" class="w-full inline-flex items-center justify-center px-6 py-3 bg-green-600 border border-transparent rounded-md font-semibold text-white text-sm uppercase tracking-widest hover:bg-green-700 focus:outline-none focus:border-green-900 focus:ring ring-green-300 disabled:opacity-25 transition ease-in-out duration-150">
+                            <!-- Stripe Elements Placeholder -->
+                            <div class="mb-6">
+                                <label for="card-element" class="block text-sm font-medium text-gray-700 mb-2">
+                                    Card Details
+                                </label>
+                                <div id="card-element" class="p-3 border border-gray-300 rounded-md">
+                                    <!-- Stripe Elements will be inserted here -->
+                                </div>
+                                <div id="card-errors" class="mt-1 text-sm text-red-600" role="alert"></div>
+                            </div>
+
+                            <!-- Used to store the payment method ID -->
+                            <input type="hidden" name="payment_method_id" id="payment_method_id">
+
+                            <!-- Used to display a loading state -->
+                            <div id="spinner" class="hidden mb-2 text-center">
+                                <div class="inline-block w-6 h-6 border-2 border-t-green-600 border-r-green-600 border-b-transparent border-l-transparent rounded-full animate-spin"></div>
+                                <span class="ml-2 text-sm text-gray-700">Processing your donation...</span>
+                            </div>
+
+                            <button type="submit" id="submit-button" class="w-full inline-flex items-center justify-center px-6 py-3 bg-green-600 border border-transparent rounded-md font-semibold text-white text-sm uppercase tracking-widest hover:bg-green-700 focus:outline-none focus:border-green-900 focus:ring ring-green-300 disabled:opacity-25 transition ease-in-out duration-150">
                                 Donate Now
                             </button>
                         </form>
@@ -204,6 +224,7 @@
     <script src="https://js.stripe.com/v3/"></script>
 
     <script>
+    // Highlight amount buttons
     function setAmount(amount) {
         document.getElementById('amount').value = amount;
         highlightButton(amount);
@@ -228,6 +249,69 @@
             event.target.classList.remove('border-gray-300');
         }
     }
+
+    // Stripe integration
+    document.addEventListener('DOMContentLoaded', function() {
+        // Initialize Stripe
+        const stripe = Stripe('{{ env("STRIPE_KEY") }}');
+        const elements = stripe.elements();
+
+        // Create card Element and mount it
+        const cardElement = elements.create('card', {
+            style: {
+                base: {
+                    color: '#32325d',
+                    fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+                    fontSmoothing: 'antialiased',
+                    fontSize: '16px',
+                    '::placeholder': {
+                        color: '#aab7c4'
+                    }
+                },
+                invalid: {
+                    color: '#fa755a',
+                    iconColor: '#fa755a'
+                }
+            },
+            hidePostalCode: true
+        });
+        cardElement.mount('#card-element');
+
+        // Handle form submission
+        const form = document.getElementById('payment-form');
+        const submitButton = document.getElementById('submit-button');
+        const spinner = document.getElementById('spinner');
+
+        form.addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            // Disable the submit button to prevent multiple submissions
+            submitButton.disabled = true;
+            spinner.classList.remove('hidden');
+
+            // Create a PaymentMethod with the card Element
+            const result = await stripe.createPaymentMethod({
+                type: 'card',
+                card: cardElement,
+                billing_details: {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value
+                }
+            });
+
+            if (result.error) {
+                // Show error to your customer
+                const errorElement = document.getElementById('card-errors');
+                errorElement.textContent = result.error.message;
+                submitButton.disabled = false;
+                spinner.classList.add('hidden');
+            } else {
+                // Send the PaymentMethod ID to your server
+                document.getElementById('payment_method_id').value = result.paymentMethod.id;
+                form.submit();
+            }
+        });
+    });
     </script>
     @endpush
 </x-app-layout>

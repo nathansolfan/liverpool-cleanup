@@ -32,7 +32,7 @@ Route::middleware('auth')->group(function () {
 
     // Donate Routes
     Route::get('/donate', [DonateController::class, 'index'])->name('donate');
-    Route::get('/donate/process', [DonateController::class, 'show'])->name('donate.process');
+    Route::post('/donate/process', [DonateController::class, 'process'])->name('donate.process');
 });
 
 // Individual cleanup areas are viewable by public (moved after create route to prevent conflict)
