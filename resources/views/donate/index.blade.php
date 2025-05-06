@@ -200,6 +200,9 @@
     </div>
 
     @push('scripts')
+    <!-- Add Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+
     <script>
     function setAmount(amount) {
         document.getElementById('amount').value = amount;
