@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Donation;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Stripe\Exception\ApiErrorException;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
 
@@ -28,6 +30,10 @@ class DonateController extends Controller
 
         ]);
 
+        // OPTION 2: Get the entire user and check if it exists
+        $user = Auth::user();
+        $userId = $user ? $user->id : null;
+
         // Stripe implementation
         try {
             // Set Stripe API Key
@@ -37,7 +43,7 @@ class DonateController extends Controller
             $amount = round($validated['amount'] * 100); // converto to pences
 
             $paymentIntent = PaymentIntent::create([
-                'amount' => '$amount',
+                'amount' => $amount,
                 'currency' => 'gbp',
                 'payment_method' => $validated['payment_method_id'],
                 'confirmation_method' => 'manual',
@@ -86,15 +92,35 @@ class DonateController extends Controller
                     'stripe_payment_id' => $paymentIntent->id ?? null,
                     'status' => 'failed'
                 ]);
+
+                return redirect()->route('donate')->with('error','An expected error');
+
             }
-        } catch (\Throwable $th) {
-            //throw $th;
+        } catch (ApiErrorException $e) {
+            //Handle Stripe API errors
+            //Log failed donation
+            Donation::create([
+                'user_id' => auth()->id(),
+                'amount' => $validated['amount'],
+                'frequency' => $validated['frequency'],
+                'payment_method' => $validated['payment_method'],
+                'name' => $validated['name'],
+                'email' => $validated['email'],
+                'status' => 'failed'
+            ]);
+
+            return redirect()->route('donate')->with('error', 'Payment error: ' . $e->getMessage());
+
+        } catch (\Exception $e) {
+            // Handle general errors
+            return redirect()->route('donate')->with('error', 'An error occurred: ' . $e->getMessage());
+
         }
 
 
         // For now, let's just return a success response
         // In a real app, you'd save the donation to the database
         // and process the payment through Stripe, PayPal, etc.
-        return redirect()->route('donate')->with('success', 'Thank you for your donation! Your support helps keep our communities clean.');
+        // return redirect()->route('donate')->with('success', 'Thank you for your donation! Your support helps keep our communities clean.');
     }
 }
