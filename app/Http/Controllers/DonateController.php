@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Donation;
 use Illuminate\Http\Request;
 use Stripe\PaymentIntent;
 use Stripe\Stripe;
@@ -15,6 +16,8 @@ class DonateController extends Controller
 
     public function process(Request $request)
     {
+
+        // Validate form inputs
         $validated = $request->validate([
             'amount' => 'required|numeric|min:1',
             'frequency' => 'required|in:one-time,monthly',
@@ -59,7 +62,30 @@ class DonateController extends Controller
             } else if ($paymentIntent->status === 'succeeded') {
                 //Payment succeeded
                 //TODO: record the donation in the database
-                $donation =
+                $donation = Donation::create([
+                    'user_id' => auth()->id(),
+                    'amount' => $validated['amount'],
+                    'frequency' => $validated['frequency'],
+                    'payment_method' => $validated['payment_method'],
+                    'name' => $validated['name'],
+                    'email' => $validated['email'],
+                    'stripe_payment_id' => $paymentIntent->id,
+                    'status' => 'completed'
+                ]);
+
+                return redirect()->route('donate')->with('success','Thank you for your support');
+            } else {
+                // Unexpected status
+                Donation::create([
+                    'user_id' => auth()->id(),
+                    'amount' => $validated['amount'],
+                    'frequency' => $validated['frequency'],
+                    'payment_method' => $validated['payment_method'],
+                    'name' => $validated['name'],
+                    'email' => $validated['email'],
+                    'stripe_payment_id' => $paymentIntent->id ?? null,
+                    'status' => 'failed'
+                ]);
             }
         } catch (\Throwable $th) {
             //throw $th;
