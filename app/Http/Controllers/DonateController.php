@@ -20,20 +20,51 @@ class DonateController extends Controller
             'frequency' => 'required|in:one-time,monthly',
             'payment_method' => 'required|in:credit_card,paypal',
             'name' => 'required|string|max:255',
-            'email' => 'required|email'
+            'email' => 'required|email',
+            'payment_method_id' => 'required|string'
+
         ]);
 
         // Stripe implementation
-        if ($validated['payment_method'] === 'credit_card') {
+        try {
+            // Set Stripe API Key
             Stripe::setApiKey(config('services.stripe.secret'));
 
-            // Create payment intent
+            // create payment intent
+            $amount = round($validated['amount'] * 100); // converto to pences
+
             $paymentIntent = PaymentIntent::create([
-                'amount' => $request->amount * 100, //Convert to pence
+                'amount' => '$amount',
                 'currency' => 'gbp',
+                'payment_method' => $validated['payment_method_id'],
+                'confirmation_method' => 'manual',
+                'confirm' => true,
                 'description' => 'Community Cleanup Donation',
+                'receipt_email' => $validated['email'],
+                'metadata' => [
+                    'name' => $validated['name'],
+                    'email' => $validated['email'],
+                    'frequency' => $validated['frequency']
+                ]
             ]);
+
+
+            // Handle next action if needed
+            if ($paymentIntent->status === 'required_action' && $paymentIntent->next_action->type === 'user_stripe_sdk') {
+                //return the client secret and required addition action
+                return response()->json([
+                    'requires_action' => true,
+                    'payment_intent_client_secret' => $paymentIntent->client_secret
+                ]);
+            } else if ($paymentIntent->status === 'succeeded') {
+                //Payment succeeded
+                //TODO: record the donation in the database
+                $donation =
+            }
+        } catch (\Throwable $th) {
+            //throw $th;
         }
+
 
         // For now, let's just return a success response
         // In a real app, you'd save the donation to the database
