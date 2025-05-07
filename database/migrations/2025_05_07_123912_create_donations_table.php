@@ -13,6 +13,14 @@ return new class extends Migration
     {
         Schema::create('donations', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('user_id')->nullable()->constrained()->nullOnDelete();
+            $table->decimal('amount', 10, 2);
+            $table->enum('frequency', ['one-time', 'monthly']);
+            $table->enum('payment_method', ['credit_card', 'paypal']);
+            $table->string('name');
+            $table->string('email');
+            $table->string('stripe_payment_id')->nullable();
+            $table->enum('status', ['pending', 'completed', 'failed'])->default('pending');
             $table->timestamps();
         });
     }
