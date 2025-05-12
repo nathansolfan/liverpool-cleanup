@@ -11,14 +11,14 @@ class Volunteer extends Model
     /** @use HasFactory<\Database\Factories\VolunteerFactory> */
     use HasFactory;
 
-    // protected $fillable = [
-    //     'user_id',
-    //     'cleanup_areas',
-    //     'status',
-    //     'volunteer_date',
-    //     'hours_committed',
-    //     'notes',
-    // ];
+    protected $fillable = [
+        'user_id',
+        'cleanup_areas',
+        'status',
+        'volunteer_date',
+        'hours_committed',
+        'notes',
+    ];
 
     /**
      * The attributes that should be cast.
