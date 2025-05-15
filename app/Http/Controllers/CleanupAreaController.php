@@ -54,6 +54,7 @@ class CleanupAreaController extends Controller
             'latitude' => 'required|numeric|between:-90,90',
             'longitude' => 'required|numeric|between:-180,180',
             'severity' => 'required|in:low,medium,high',
+            'status' => 'required|in:reported,scheduled,completed'
         ]);
 
         $validated['status'] = 'reported';
