@@ -20,7 +20,7 @@
                     <!-- Authenticated Links -->
                     @auth
                         <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
-                            {{ __('Dashboard') }}
+                            {{ __('About Us') }}
                         </x-nav-link>
                         <x-nav-link :href="route('cleanup-areas.index')" :active="request()->routeIs('cleanup-areas.*')">
                             {{ __('Manage Areas') }}
