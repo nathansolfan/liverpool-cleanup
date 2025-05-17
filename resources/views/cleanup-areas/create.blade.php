@@ -59,6 +59,9 @@
                             </select>
                         </div>
 
+                         <!-- Hidden status field with default value of 'reported' -->
+                        <input type="hidden" name="status" value="reported">
+
                         <div class="mb-6">
                             <p class="block text-sm font-medium text-gray-700 mb-2">Location</p>
 
