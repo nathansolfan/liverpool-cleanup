@@ -68,7 +68,7 @@ class CleanupAreaController extends Controller
 
         $cleanupArea = CleanupArea::create($validated);
 
-        return redirect()->route('cleanup-areas.show', $cleanupArea)->with('success', 'Cleanup Area reported with success');
+        return redirect()->route('cleanup-areas.index', $cleanupArea)->with('success', 'Cleanup Area reported with success');
     }
 
     /**
