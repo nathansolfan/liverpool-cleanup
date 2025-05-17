@@ -57,7 +57,13 @@ class CleanupAreaController extends Controller
             'status' => 'required|in:reported,scheduled,completed'
         ]);
 
-        $validated['status'] = 'reported';
+        // Status is already set via hidden field, but we ensure it here as a fallback
+        if (!isset($validated['status']) || empty($validated['status'])) {
+            $validated['status'] = 'reported';
+        }
+
+
+        // $validated['status'] = 'reported';
         $validated['user_id'] = $request->user()->id;
 
         $cleanupArea = CleanupArea::create($validated);
