@@ -37,7 +37,8 @@ class CleanupAreaPolicy
      */
     public function update(User $user, CleanupArea $cleanupArea): bool
     {
-        return false;
+        // return false;
+        return $user->id === $cleanupArea->user_id;
     }
 
     /**
@@ -45,7 +46,9 @@ class CleanupAreaPolicy
      */
     public function delete(User $user, CleanupArea $cleanupArea): bool
     {
-        return false;
+        // return false;
+        return $user->id === $cleanupArea->user_id;
+
     }
 
     /**
