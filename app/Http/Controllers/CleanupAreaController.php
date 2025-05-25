@@ -85,6 +85,7 @@ class CleanupAreaController extends Controller
      */
     public function edit(CleanupArea $cleanupArea)
     {
+        $this->authorize('update', $cleanupArea);
         return view('cleanup-areas.edit', compact('cleanupArea'));
     }
 
