@@ -94,6 +94,8 @@ class CleanupAreaController extends Controller
      */
     public function update(Request $request, CleanupArea $cleanupArea)
     {
+        $this->authorize('update', $cleanupArea);
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -112,6 +114,7 @@ class CleanupAreaController extends Controller
      */
     public function destroy(CleanupArea $cleanupArea)
     {
+        $this->authorize('delete', $cleanupArea);
         $cleanupArea->delete();
 
         return redirect()->route('cleanup-areas.index')->with('success', 'Cleanup Area deleted');
